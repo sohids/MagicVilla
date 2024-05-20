@@ -1,0 +1,19 @@
+1. Above every controller therre should be written route. Which is the ultimate URL of Api endpoint. No matter what's the controller name is 
+
+  [Route("api/Blah")]
+  [ApiController]
+  public class VillaController: ControllerBase
+  {
+      [HttpGet]
+      public IEnumerable<Villa> GetVillas()
+      {
+          return new List<Villa>
+          {
+              new Villa { Id = 1, Name = "Pool View" },
+              new Villa { Id = 1, Name = "Beach View" },
+          };
+      }
+
+  }
+
+Here: https://localhost:7214/api/Blah is the URL 
