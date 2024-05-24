@@ -17,3 +17,13 @@
   }
 
 Here: https://localhost:7214/api/Blah is the URL 
+
+
+2. We CreatedDate only use in database but we don't expose that in end user. So Villa Dto doesn'thave created date but villa has
+3. You cannot use same http verb two times. Without any proper parameters HttpGet, HttpGet("id")
+4. To return specific status code you must have to use ActionResult as return type 
+5. You can even use  verb parameter something like this - [HttpGet("{id:int}")] as parameter 
+6. The annotation helps to document the status code  [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+
+=========class 24 should be started next ===============
