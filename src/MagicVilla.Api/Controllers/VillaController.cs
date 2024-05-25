@@ -78,11 +78,13 @@ namespace MagicVilla.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+
         public IActionResult DeleteVilla(int id)
         {
             if (id == 0)
             {
-                _logger.LogInformation("Invalid Villa Id");
+                _logger.LogInformation($"Invalid Villa Id = {id}");
                 return BadRequest(); 
             }
 
@@ -93,7 +95,7 @@ namespace MagicVilla.Api.Controllers
                 return NotFound();
             }
             VillaStore.villaList.Remove(villa);
-            _logger.LogInformation("Villa has removed successfully");
+            _logger.LogInformation($"Villa with id = {id} has removed successfully");
 
             return NoContent();
         }
@@ -102,11 +104,12 @@ namespace MagicVilla.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult UpdateVilla(int id, [FromBody] VillaDto villaDto)
         {
             if (id == 0 || id!= villaDto.Id)
             {
-                _logger.LogWarning("Invalid villa request");
+                _logger.LogWarning($"Request id = {id} and Dto Id = {villaDto.Id} don't match");
                 return BadRequest();
             }
 
@@ -134,24 +137,29 @@ namespace MagicVilla.Api.Controllers
         {
             if (patchDto == null || id == 0)
             {
-                _logger.LogWarning("Invalid input");
+                _logger.LogWarning($"input is null or request id {id} is invalid");
                 return BadRequest();
             }
 
             var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
             if (villa == null)
             {
+                _logger.LogWarning($"Villa not fund against the id = {id}");
+
                 return BadRequest();
             }
 
             patchDto.ApplyTo(villa, ModelState);
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                _logger.LogWarning("Field updated successfully");
+                return NoContent();
             }
 
-            return NoContent();
+            _logger.LogWarning("ModelState seems to be invalid");
+            return BadRequest(ModelState);
+
         }
     }
 }
