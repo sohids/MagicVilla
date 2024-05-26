@@ -121,8 +121,8 @@ namespace MagicVilla.Api.Controllers
             }
 
             villa.Name = villaDto.Name;
-            villa.Occupency = villaDto.Occupency;
-            villa.Sqft = villaDto.Sqft;
+            villa.Occupancy = villaDto.Occupancy;
+            villa.SqFt = villaDto.SqFt;
 
             _logger.LogWarning("Villa updated successfully");
 
