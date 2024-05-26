@@ -1,5 +1,4 @@
 using MagicVilla.Api.Data;
-using MagicVilla.Api.Logging;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;

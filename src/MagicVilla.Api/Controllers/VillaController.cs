@@ -3,6 +3,7 @@ using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MagicVilla.Api.Controllers
 {
@@ -145,17 +146,15 @@ namespace MagicVilla.Api.Controllers
             villa.Rate = villaDto.Rate;
             villa.ImageUrl = villaDto.ImageUrl;
 
-            // _dbContext.Update(villa);
             _dbContext.SaveChanges();
-
-            _logger.LogWarning("Villa updated successfully");
+            _logger.LogInformation("Villa updated successfully");
 
             return NoContent();
         }
 
         //There is an issue with patch request right now, it shouldn't work properly 
         //fix it using this: https://www.udemy.com/course/restful-api-with-asp-dot-net-core-web-api/learn/lecture/33346200#notes
-        
+         
         [HttpPatch("{id:int}", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -168,7 +167,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = _dbContext.Villas?.FirstOrDefault(x => x.Id == id);
+            var villa = _dbContext.Villas?.AsNoTracking().FirstOrDefault(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning($"Villa not found against the id = {id}");
@@ -189,6 +188,20 @@ namespace MagicVilla.Api.Controllers
 
             patchDto.ApplyTo(villaDto, ModelState);
 
+            var model = new Villa
+            {
+                Name = villaDto.Name,
+                Occupancy = villaDto.Occupancy,
+                SqFt = villaDto.SqFt,
+                Details = villaDto.Details,
+                Id = villaDto.Id,
+                Rate = villaDto.Rate,
+                ImageUrl = villaDto.ImageUrl,
+                Amenity = villaDto.Amenity
+            };
+
+            _dbContext.Villas?.Update(model);
+            _dbContext.SaveChanges();
 
             if (ModelState.IsValid)
             {
