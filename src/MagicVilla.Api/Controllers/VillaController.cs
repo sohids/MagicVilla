@@ -1,4 +1,5 @@
 ﻿using MagicVilla.Api.Data;
+using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +11,19 @@ namespace MagicVilla.Api.Controllers
     public class VillaController : ControllerBase
     {
         private readonly ILogger<VillaController> _logger;
+        private readonly ApplicationDbContext _dbContext;
 
-        public VillaController(ILogger<VillaController> logger)
+        public VillaController(ILogger<VillaController> logger, ApplicationDbContext dbContext)
         {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<VillaDto>> GetVillas()
         {
             _logger.LogDebug("Getting a list of villa");
-            return Ok(VillaStore.villaList);
+            return Ok(_dbContext.Villas?.ToList());
         }
 
         [HttpGet("{id:int}", Name = "GetVilla")]
@@ -34,13 +37,12 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
+            var villa = _dbContext.Villas?.FirstOrDefault(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning($"Villa doesn't found against the id {id}");
                 return NotFound();
             }
-
             return Ok(villa);
         }
 
@@ -56,11 +58,11 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            if (VillaStore.villaList.FirstOrDefault(x => x.Name.ToLower() == villaDto.Name.ToLower())!= null)
+            if (_dbContext.Villas?.FirstOrDefault(x => x.Name.ToLower() == villaDto.Name.ToLower()) != null)
             {
                 _logger.LogWarning("Duplicate Villa name");
-                 ModelState.AddModelError("CustomError", "Villa already exist");
-                 return BadRequest(ModelState);
+                ModelState.AddModelError("CustomError", "Villa already exist");
+                return BadRequest(ModelState);
             }
             if (villaDto.Id > 0)
             {
@@ -68,8 +70,21 @@ namespace MagicVilla.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            villaDto.Id = VillaStore.villaList.MaxBy(x => x.Id)!.Id + 1;
-            VillaStore.villaList.Add(villaDto);
+            var villa = new Villa
+            {
+                Name = villaDto.Name,
+                Details = villaDto.Details,
+                ImageUrl = villaDto.ImageUrl,
+                Occupancy = villaDto.Occupancy,
+                Rate = villaDto.Rate,
+                SqFt = villaDto.SqFt,
+                Amenity = villaDto.Amenity,
+                CreatedDate = DateTime.Now
+            };
+
+            _dbContext.Villas?.Add(villa);
+            _dbContext.SaveChanges();
+
             _logger.LogInformation("New villa added");
             return CreatedAtRoute("GetVilla", new { id = villaDto.Id }, villaDto);
         }
@@ -85,16 +100,18 @@ namespace MagicVilla.Api.Controllers
             if (id == 0)
             {
                 _logger.LogInformation($"Invalid Villa Id = {id}");
-                return BadRequest(); 
+                return BadRequest();
             }
 
-            var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
+            var villa = _dbContext.Villas?.FirstOrDefault(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning($"Villa doesn't exist against this id {id}");
                 return NotFound();
             }
-            VillaStore.villaList.Remove(villa);
+            _dbContext.Villas?.Remove(villa);
+            _dbContext.SaveChanges();
+
             _logger.LogInformation($"Villa with id = {id} has removed successfully");
 
             return NoContent();
@@ -107,13 +124,13 @@ namespace MagicVilla.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult UpdateVilla(int id, [FromBody] VillaDto villaDto)
         {
-            if (id == 0 || id!= villaDto.Id)
+            if (id == 0 || id != villaDto.Id)
             {
                 _logger.LogWarning($"Request id = {id} and Dto Id = {villaDto.Id} don't match");
                 return BadRequest();
             }
 
-            var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
+            var villa = _dbContext.Villas?.FirstOrDefault(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning("Villa not found");
@@ -123,12 +140,22 @@ namespace MagicVilla.Api.Controllers
             villa.Name = villaDto.Name;
             villa.Occupancy = villaDto.Occupancy;
             villa.SqFt = villaDto.SqFt;
+            villa.Details = villaDto.Details;
+            villa.Id = villaDto.Id;
+            villa.Rate = villaDto.Rate;
+            villa.ImageUrl = villaDto.ImageUrl;
+
+            // _dbContext.Update(villa);
+            _dbContext.SaveChanges();
 
             _logger.LogWarning("Villa updated successfully");
 
             return NoContent();
         }
 
+        //There is an issue with patch request right now, it shouldn't work properly 
+        //fix it using this: https://www.udemy.com/course/restful-api-with-asp-dot-net-core-web-api/learn/lecture/33346200#notes
+        
         [HttpPatch("{id:int}", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -141,15 +168,27 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = VillaStore.villaList.FirstOrDefault(x => x.Id == id);
+            var villa = _dbContext.Villas?.FirstOrDefault(x => x.Id == id);
             if (villa == null)
             {
-                _logger.LogWarning($"Villa not fund against the id = {id}");
+                _logger.LogWarning($"Villa not found against the id = {id}");
 
                 return BadRequest();
             }
 
-            patchDto.ApplyTo(villa, ModelState);
+            var villaDto = new VillaDto
+            {
+                Name = villa.Name,
+                Occupancy = villa.Occupancy,
+                SqFt = villa.SqFt,
+                Details = villa.Details,
+                Id = villa.Id,
+                Rate = villa.Rate,
+                ImageUrl = villa.ImageUrl,
+            };
+
+            patchDto.ApplyTo(villaDto, ModelState);
+
 
             if (ModelState.IsValid)
             {
@@ -159,7 +198,6 @@ namespace MagicVilla.Api.Controllers
 
             _logger.LogWarning("ModelState seems to be invalid");
             return BadRequest(ModelState);
-
         }
     }
 }
