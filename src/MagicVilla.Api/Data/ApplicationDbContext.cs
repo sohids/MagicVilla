@@ -24,7 +24,7 @@ namespace MagicVilla.Api.Data
                     Occupancy = 4,
                     Rate = 200,
                     SqFt = 550, 
-                    Amenity = "",
+                    Amenity = "Sample amenity",
                     CreatedDate = DateTime.Now
                 },
               new Villa
@@ -36,7 +36,7 @@ namespace MagicVilla.Api.Data
                   Occupancy = 4,
                   Rate = 300,
                   SqFt = 550,
-                  Amenity = "",
+                  Amenity = "Sample amenity",
                   CreatedDate = DateTime.Now
               },
               new Villa
@@ -48,7 +48,7 @@ namespace MagicVilla.Api.Data
                   Occupancy = 4,
                   Rate = 400,
                   SqFt = 750,
-                  Amenity = "",
+                  Amenity = "Sample amenity",
                   CreatedDate = DateTime.Now
               },
               new Villa
@@ -60,7 +60,7 @@ namespace MagicVilla.Api.Data
                   Occupancy = 4,
                   Rate = 550,
                   SqFt = 900,
-                  Amenity = "",
+                  Amenity = "Sample amenity",
                   CreatedDate = DateTime.Now
               },
               new Villa
@@ -72,7 +72,7 @@ namespace MagicVilla.Api.Data
                   Occupancy = 4,
                   Rate = 600,
                   SqFt = 1100,
-                  Amenity = "",
+                  Amenity = "Sample amenity",
                   CreatedDate = DateTime.Now
               }
             );
