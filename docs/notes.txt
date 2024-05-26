@@ -26,4 +26,12 @@ Here: https://localhost:7214/api/Blah is the URL
 6. The annotation helps to document the status code  [ProducesResponseType(StatusCodes.Status404NotFound)]
 
 
+db migrations 
+If u face culture invariant related issue here is the solution   ,
+
+make sure you are using database-update not update-database
+
+  <InvariantGlobalization>false</InvariantGlobalization>
+
+
 =========class 34 should be started next ===============
