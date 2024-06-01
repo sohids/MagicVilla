@@ -28,7 +28,7 @@ namespace MagicVilla.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{id:int}", Name = "GetVilla")]
+        [HttpGet("{id}", Name = "GetVilla")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,7 +60,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            if (_dbContext.Villas?.FirstOrDefault(x => x.Name.ToLower() == villaDto.Name.ToLower()) != null)
+            if (_dbContext.Villas.FirstOrDefault(x => x.Name.ToLower() == villaDto.Name.ToLower()) != null)
             {
                 _logger.LogWarning("Duplicate Villa name");
                 ModelState.AddModelError("CustomError", "Villa already exist");
@@ -79,14 +79,14 @@ namespace MagicVilla.Api.Controllers
                 CreatedDate = DateTime.Now
             };
 
-            _dbContext.Villas?.Add(model);
+            _dbContext.Villas.Add(model);
             _dbContext.SaveChanges();
 
             _logger.LogInformation("New villa added");
             return CreatedAtRoute("GetVilla", new { id = model.Id }, model);
         }
 
-        [HttpDelete("{id:int}", Name = "DeleteVilla")]
+        [HttpDelete("{id}", Name = "DeleteVilla")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -114,7 +114,7 @@ namespace MagicVilla.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id:int}", Name = "UpdateVilla")]
+        [HttpPut("{id}", Name = "UpdateVilla")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -151,7 +151,7 @@ namespace MagicVilla.Api.Controllers
         //There is an issue with patch request right now, it shouldn't work properly 
         //fix it using this: https://www.udemy.com/course/restful-api-with-asp-dot-net-core-web-api/learn/lecture/33346200#notes
          
-        [HttpPatch("{id:int}", Name = "UpdatePartialVilla")]
+        [HttpPatch("{id}", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
