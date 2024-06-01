@@ -1,4 +1,5 @@
-﻿using MagicVilla.Api.Data;
+﻿using AutoMapper;
+using MagicVilla.Api.Data;
 using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using Microsoft.AspNetCore.JsonPatch;
@@ -13,19 +14,21 @@ namespace MagicVilla.Api.Controllers
     {
         private readonly ILogger<VillaController> _logger;
         private readonly ApplicationDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public VillaController(ILogger<VillaController> logger, ApplicationDbContext dbContext)
+        public VillaController(ILogger<VillaController> logger, ApplicationDbContext dbContext, IMapper mapper)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VillaDto>>> GetVillas()
         {
             _logger.LogDebug("Getting a list of villa");
-            var result = await _dbContext.Villas.ToListAsync();
-            return Ok(result);
+            var villaList = await _dbContext.Villas.ToListAsync();
+            return Ok(_mapper.Map<VillaDto>(villaList));
         }
 
         [HttpGet("{id}", Name = "GetVilla")]
@@ -45,14 +48,14 @@ namespace MagicVilla.Api.Controllers
                 _logger.LogWarning($"Villa doesn't found against the id {id}");
                 return NotFound();
             }
-            return Ok(villa);
+            return Ok(_mapper.Map<VillaDto>(villa));
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<VillaCreateDto>> CreateVilla([FromBody] VillaCreateDto villaDto)
+        public async Task<ActionResult<VillaCreateDto>> CreateVilla([FromBody] VillaCreateDto createDto)
         {
             if (!ModelState.IsValid)
             {
@@ -60,30 +63,20 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            if (await _dbContext.Villas.FirstOrDefaultAsync(x => x.Name.ToLower() == villaDto.Name.ToLower()) != null)
+            if (await _dbContext.Villas.FirstOrDefaultAsync(x => x.Name.ToLower() == createDto.Name.ToLower()) != null)
             {
                 _logger.LogWarning("Duplicate Villa name");
                 ModelState.AddModelError("CustomError", "Villa already exist");
                 return BadRequest(ModelState);
             }
 
-            var model = new Villa
-            {
-                Name = villaDto.Name,
-                Details = villaDto.Details,
-                ImageUrl = villaDto.ImageUrl,
-                Occupancy = villaDto.Occupancy,
-                Rate = villaDto.Rate,
-                SqFt = villaDto.SqFt,
-                Amenity = villaDto.Amenity,
-                CreatedDate = DateTime.Now
-            };
+            var villa = _mapper.Map<Villa>(createDto);
 
-            _dbContext.Villas.Add(model);
+            _dbContext.Villas.Add(villa);
             await _dbContext.SaveChangesAsync();
 
             _logger.LogInformation("New villa added");
-            return CreatedAtRoute("GetVilla", new { id = model.Id }, model);
+            return CreatedAtRoute("GetVilla", new { id = villa.Id }, villa);
         }
 
         [HttpDelete("{id}", Name = "DeleteVilla")]

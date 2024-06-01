@@ -1,3 +1,4 @@
+using MagicVilla.Api;
 using MagicVilla.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(MappingConfig));
+
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStr"));
