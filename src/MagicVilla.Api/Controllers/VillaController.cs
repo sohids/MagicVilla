@@ -32,7 +32,7 @@ namespace MagicVilla.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task< ActionResult<VillaDto>> GetVilla(int id)
+        public async Task<ActionResult<VillaDto>> GetVilla(int id)
         {
             if (id == 0)
             {
@@ -52,7 +52,7 @@ namespace MagicVilla.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<VillaCreateDto> CreateVilla([FromBody] VillaCreateDto villaDto)
+        public async Task<ActionResult<VillaCreateDto>> CreateVilla([FromBody] VillaCreateDto villaDto)
         {
             if (!ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            if (_dbContext.Villas.FirstOrDefault(x => x.Name.ToLower() == villaDto.Name.ToLower()) != null)
+            if (await _dbContext.Villas.FirstOrDefaultAsync(x => x.Name.ToLower() == villaDto.Name.ToLower()) != null)
             {
                 _logger.LogWarning("Duplicate Villa name");
                 ModelState.AddModelError("CustomError", "Villa already exist");
@@ -80,7 +80,7 @@ namespace MagicVilla.Api.Controllers
             };
 
             _dbContext.Villas.Add(model);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             _logger.LogInformation("New villa added");
             return CreatedAtRoute("GetVilla", new { id = model.Id }, model);
@@ -106,7 +106,7 @@ namespace MagicVilla.Api.Controllers
                 _logger.LogWarning($"Villa doesn't exist against this id {id}");
                 return NotFound();
             }
-            _dbContext.Villas?.Remove(villa);
+            _dbContext.Villas.Remove(villa);
             await _dbContext.SaveChangesAsync();
 
             _logger.LogInformation($"Villa with id = {id} has removed successfully");
@@ -148,9 +148,6 @@ namespace MagicVilla.Api.Controllers
             return NoContent();
         }
 
-        //There is an issue with patch request right now, it shouldn't work properly 
-        //fix it using this: https://www.udemy.com/course/restful-api-with-asp-dot-net-core-web-api/learn/lecture/33346200#notes
-         
         [HttpPatch("{id}", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

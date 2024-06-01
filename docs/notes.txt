@@ -25,6 +25,12 @@ Here: https://localhost:7214/api/Blah is the URL
 5. You can even use  verb parameter something like this - [HttpGet("{id:int}")] as parameter 
 6. The annotation helps to document the status code  [ProducesResponseType(StatusCodes.Status404NotFound)]
 
+[HttpGet("{id}", Name = "GetVilla")]
+
+Here the second paramter used to generate link and redirect URL. 
+example- var url = Url.Link("GetVilla", new { id = 123 }) will generate url something like this: /api/villa/123
+To redirect URL: return RedirectToRoute("GetVilla", new { id = 123 });
+
 
 db migrations 
 If u face culture invariant related issue here is the solution   ,
