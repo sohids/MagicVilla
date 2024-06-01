@@ -24,7 +24,7 @@ namespace MagicVilla.Api.Controllers
         public async Task<ActionResult<IEnumerable<VillaDto>>> GetVillas()
         {
             _logger.LogDebug("Getting a list of villa");
-            var result = await _dbContext.Villas?.ToListAsync();
+            var result = await _dbContext.Villas.ToListAsync();
             return Ok(result);
         }
 
@@ -39,7 +39,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = await _dbContext.Villas?.FirstOrDefaultAsync(x => x.Id == id);
+            var villa = await _dbContext.Villas.FirstOrDefaultAsync(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning($"Villa doesn't found against the id {id}");
@@ -100,7 +100,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = await _dbContext.Villas?.FirstOrDefaultAsync(x => x.Id == id);
+            var villa = await _dbContext.Villas.FirstOrDefaultAsync(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning($"Villa doesn't exist against this id {id}");
@@ -127,7 +127,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = await _dbContext.Villas?.FirstOrDefaultAsync(x => x.Id == id);
+            var villa = await _dbContext.Villas.FirstOrDefaultAsync(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning("Villa not found");
@@ -163,7 +163,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = await _dbContext.Villas?.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var villa = await _dbContext.Villas.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             if (villa == null)
             {
                 _logger.LogWarning($"Villa not found against the id = {id}");
@@ -196,7 +196,7 @@ namespace MagicVilla.Api.Controllers
                 Amenity = villaDto.Amenity
             };
 
-            _dbContext.Villas?.Update(model);
+            _dbContext.Villas.Update(model);
             await _dbContext.SaveChangesAsync();
 
             if (ModelState.IsValid)
