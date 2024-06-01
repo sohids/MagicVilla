@@ -148,10 +148,10 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villaDto = _mapper.Map<VillaUpdateDto>(villa);
-            patchDto.ApplyTo(villaDto, ModelState);
+            var villaUpdateDto = _mapper.Map<VillaUpdateDto>(villa);
+            patchDto.ApplyTo(villaUpdateDto, ModelState);
 
-            var model = _mapper.Map<Villa>(villaDto);
+            var model = _mapper.Map<Villa>(villaUpdateDto);
             _dbContext.Villas.Update(model);
             await _dbContext.SaveChangesAsync();
 
