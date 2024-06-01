@@ -120,22 +120,20 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest();
             }
 
-            var villa = await _dbContext.Villas.FirstOrDefaultAsync(x => x.Id == id);
-            if (villa == null)
+            var villa = new Villa
             {
-                _logger.LogWarning("Villa not found");
-                return NotFound();
-            }
+                Name = villaDto.Name,
+                Occupancy = villaDto.Occupancy,
+                SqFt = villaDto.SqFt,
+                Details = villaDto.Details,
+                Id = villaDto.Id,
+                Rate = villaDto.Rate,
+                ImageUrl = villaDto.ImageUrl,
+                Amenity = villaDto.Amenity
+            };
 
-            villa.Name = villaDto.Name;
-            villa.Occupancy = villaDto.Occupancy;
-            villa.SqFt = villaDto.SqFt;
-            villa.Details = villaDto.Details;
-            villa.Id = villaDto.Id;
-            villa.Rate = villaDto.Rate;
-            villa.ImageUrl = villaDto.ImageUrl;
-
-             await _dbContext.SaveChangesAsync();
+            _dbContext.Villas.Update(villa);
+            await _dbContext.SaveChangesAsync();
             _logger.LogInformation("Villa updated successfully");
 
             return NoContent();
