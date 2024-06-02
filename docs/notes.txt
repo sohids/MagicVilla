@@ -40,4 +40,9 @@ make sure you are using database-update not update-database
   <InvariantGlobalization>false</InvariantGlobalization>
 
 
-=========class 34 should be started next ===============
+So far we used automapper. 
+the structure is Controller/Api takes dto and expose dto. So basically when it pass something to database it first convert the dto to model object, and when it expose the data to the user then it convert the model to dto. 
+
+From now we'll not allow api/controller to direclty communicate with database. We'll introduce repository pattern and let it handle the databse stuffs. 
+
+Next => Start from the Repository Pattern - 48
