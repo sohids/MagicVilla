@@ -3,6 +3,7 @@ using AutoMapper;
 using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using MagicVilla.Api.Repository.IRepository;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,20 +15,23 @@ namespace MagicVilla.Api.Controllers
     {
         private readonly ILogger<VillaController> _logger;
         private readonly IVillaNumberRepository _villaNumberRepository;
+        private readonly IVillaRepository _villaRepository;
         private readonly IMapper _mapper;
-        protected readonly ApiResponse _response;
+        private readonly ApiResponse _response;
 
-        public VillaNumberController(ILogger<VillaController> logger, IVillaNumberRepository villaNumberRepository, IMapper mapper)
+        public VillaNumberController(ILogger<VillaController> logger, IVillaNumberRepository villaNumberRepository,
+            IMapper mapper, IVillaRepository villaRepository)
         {
             _logger = logger;
             _villaNumberRepository = villaNumberRepository;
             _mapper = mapper;
             _response = new ApiResponse();
+            _villaRepository = villaRepository;
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<ApiResponse>> GetVillas()
+        public async Task<ActionResult<ApiResponse>> GetVillaNumbers()
         {
             try
             {
@@ -40,7 +44,7 @@ namespace MagicVilla.Api.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessage = new List<string>() { ex.Message };
+                _response.ErrorMessage = new List<string> { ex.ToString() };
             }
             return _response;
         }
@@ -84,6 +88,11 @@ namespace MagicVilla.Api.Controllers
                     ModelState.AddModelError("CustomError", "Villa Number already exist");
                     return BadRequest(ModelState);
                 }
+                if (await _villaRepository.GetAsync(x => x.Id == createDto.VillaId) == null)
+                {
+                    ModelState.AddModelError("CustomError", "Villa Id is invalid");
+                    return BadRequest(ModelState);
+                }
 
                 var villaNumber = _mapper.Map<VillaNumber>(createDto);
 
@@ -98,7 +107,7 @@ namespace MagicVilla.Api.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessage = new List<string> { ex.Message };
+                _response.ErrorMessage = new List<string> { ex.ToString() };
             }
             return _response;
             
@@ -138,7 +147,7 @@ namespace MagicVilla.Api.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessage = new List<string> { ex.Message };
+                _response.ErrorMessage = new List<string> { ex.ToString() };
             }
 
             return _response;
@@ -161,6 +170,12 @@ namespace MagicVilla.Api.Controllers
                     return BadRequest(_response);
                 }
 
+                if (await _villaRepository.GetAsync(x => x.Id == updateDto.VillaId) == null)
+                {
+                    ModelState.AddModelError("CustomError", "Villa Id is invalid");
+                    return BadRequest(ModelState);
+                }
+
                 var villaNumber = _mapper.Map<VillaNumber>(updateDto);
                 await _villaNumberRepository.UpdateAsync(villaNumber);
                 _logger.LogInformation("Villa updated successfully");
@@ -173,7 +188,7 @@ namespace MagicVilla.Api.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessage = new List<string> { ex.Message };
+                _response.ErrorMessage = new List<string> { ex.ToString() };
             }
 
             return _response;
