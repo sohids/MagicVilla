@@ -133,7 +133,7 @@ namespace MagicVilla.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MagicVilla.Api.Models.VillaNumber", b =>
+            modelBuilder.Entity("MagicVilla.Api.Models.VillaNo", b =>
                 {
                     b.Property<int>("VillaNo")
                         .HasColumnType("int");
