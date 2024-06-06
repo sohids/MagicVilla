@@ -15,7 +15,7 @@ namespace MagicVilla.Api.Controllers
         private readonly ILogger<VillaController> _logger;
         private readonly IVillaRepository _villaRepository;
         private readonly IMapper _mapper;
-        protected readonly ApiResponse _response;
+        private readonly ApiResponse _response;
 
         public VillaController(ILogger<VillaController> logger, IVillaRepository villaRepository, IMapper mapper)
         {

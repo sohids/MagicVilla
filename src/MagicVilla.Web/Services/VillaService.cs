@@ -30,7 +30,7 @@ namespace MagicVilla.Web.Services
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Get,
-                Url = _baseUrl + "/api/villaApi"
+                Url = _baseUrl + "/api/villas"
             });
 
         }
@@ -41,7 +41,7 @@ namespace MagicVilla.Web.Services
             {
                 ApiType = StaticDetails.ApiType.Post,
                 Data = createDto,
-                Url = _baseUrl+"/api/villaApi"
+                Url = _baseUrl+"/api/villas"
             });
         }
 
@@ -51,7 +51,7 @@ namespace MagicVilla.Web.Services
             {
                 ApiType = StaticDetails.ApiType.Put,
                 Data = updateDto,
-                Url = _baseUrl + "/api/villaApi"+updateDto.Id
+                Url = _baseUrl + "/api/villas" +updateDto.Id
             });
         }
 
@@ -60,7 +60,7 @@ namespace MagicVilla.Web.Services
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Delete,
-                Url = _baseUrl + "/api/villaApi"+id
+                Url = _baseUrl + "/api/villas" +id
             });
         }
 
