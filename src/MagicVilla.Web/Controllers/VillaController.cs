@@ -4,6 +4,8 @@ using MagicVilla.Web.Models.Dto;
 using MagicVilla.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace MagicVilla.Web.Controllers
 {
@@ -38,6 +40,31 @@ namespace MagicVilla.Web.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _villaService.CreateAsync<ApiResponse>(model);
+                if (response is { IsSuccess: true })
+                {
+                    return RedirectToAction(nameof(IndexVilla));
+                }
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> UpdateVilla(int id)
+        {
+            var response = await _villaService.GetAsync<ApiResponse>(id);
+            if (response is not { IsSuccess: true }) return View();
+
+            var model = JsonConvert.DeserializeObject<List<VillaDto>>(response.Result.ToString() ?? string.Empty);
+
+            return View(_mapper.Map<VillaUpdateDto>(model));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateVilla(VillaUpdateDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _villaService.UpdateAsync<ApiResponse>(model);
                 if (response is { IsSuccess: true })
                 {
                     return RedirectToAction(nameof(IndexVilla));

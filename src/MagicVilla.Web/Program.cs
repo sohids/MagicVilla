@@ -1,6 +1,8 @@
 using MagicVilla.Web;
 using MagicVilla.Web.Services;
 using MagicVilla.Web.Services.IService;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddHttpClient<IVillaService, VillaService>();
-builder.Services.AddScoped<IVillaService, VillaService>();    
+builder.Services.AddScoped<IVillaService, VillaService>();
+
+builder.Host.UseSerilog((ctx, lc) => lc.MinimumLevel.Debug().MinimumLevel.Override("Microsoft", LogEventLevel.Warning).Enrich.FromLogContext().ReadFrom.Configuration(builder.Configuration));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

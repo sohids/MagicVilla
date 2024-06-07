@@ -3,6 +3,7 @@ using MagicVilla.Utility;
 using MagicVilla.Web.Models;
 using MagicVilla.Web.Services.IService;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace MagicVilla.Web.Services
 {

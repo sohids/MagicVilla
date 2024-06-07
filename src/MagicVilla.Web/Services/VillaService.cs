@@ -30,7 +30,7 @@ namespace MagicVilla.Web.Services
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Get,
-                Url = _baseUrl + "/api/villas"
+                Url = _baseUrl + "/api/villas/"+id
             });
 
         }
