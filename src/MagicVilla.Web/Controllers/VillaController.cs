@@ -54,7 +54,7 @@ namespace MagicVilla.Web.Controllers
             var response = await _villaService.GetAsync<ApiResponse>(id);
             if (response is not { IsSuccess: true }) return View();
 
-            var model = JsonConvert.DeserializeObject<List<VillaDto>>(response.Result.ToString() ?? string.Empty);
+            var model = JsonConvert.DeserializeObject<VillaDto>(response.Result.ToString() ?? string.Empty);
 
             return View(_mapper.Map<VillaUpdateDto>(model));
         }

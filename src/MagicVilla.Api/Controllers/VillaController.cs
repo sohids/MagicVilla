@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MagicVilla.Api.Controllers
 {
     [Route("api/Villas")]
-    [ApiController]
+   // [ApiController]
     public class VillaController : ControllerBase
     {
         private readonly ILogger<VillaController> _logger;
