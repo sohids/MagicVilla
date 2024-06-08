@@ -85,12 +85,12 @@ namespace MagicVilla.Api.Controllers
                 if (await _villaNumberRepository.GetAsync(x => x.VillaNo == createDto.VillaNo) != null)
                 {
                     _logger.LogWarning("Duplicate Villa name");
-                    ModelState.AddModelError("CustomError", "Villa Number already exist");
+                    ModelState.AddModelError("ErrorMessage", "Villa Number already exist");
                     return BadRequest(ModelState);
                 }
                 if (await _villaRepository.GetAsync(x => x.Id == createDto.VillaId) == null)
                 {
-                    ModelState.AddModelError("CustomError", "Villa Id is invalid");
+                    ModelState.AddModelError("ErrorMessage", "Villa Id is invalid");
                     return BadRequest(ModelState);
                 }
 
