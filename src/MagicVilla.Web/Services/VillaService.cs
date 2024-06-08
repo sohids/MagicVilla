@@ -60,7 +60,7 @@ namespace MagicVilla.Web.Services
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Delete,
-                Url = _baseUrl + "/api/villas" +id
+                Url = _baseUrl + "/api/villas/" +id
             });
         }
 

@@ -60,6 +60,7 @@ namespace MagicVilla.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateVilla(VillaUpdateDto model)
         {
             if (ModelState.IsValid)
@@ -69,6 +70,29 @@ namespace MagicVilla.Web.Controllers
                 {
                     return RedirectToAction(nameof(IndexVilla));
                 }
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeleteVilla(int id)
+        {
+            var response = await _villaService.GetAsync<ApiResponse>(id);
+            if (response is not { IsSuccess: true }) return NotFound();
+
+            var model = JsonConvert.DeserializeObject<VillaDto>(response.Result.ToString() ?? string.Empty);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVilla(VillaDto model)
+        {
+            var response = await _villaService.DeleteAsync<ApiResponse>(model.Id);
+            if (response is { IsSuccess: true })
+            {
+                return RedirectToAction(nameof(IndexVilla));
             }
 
             return View(model);
