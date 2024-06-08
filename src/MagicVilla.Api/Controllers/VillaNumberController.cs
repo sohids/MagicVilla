@@ -36,7 +36,7 @@ namespace MagicVilla.Api.Controllers
             try
             {
                 _logger.LogDebug("Getting a list of villa numbers");
-                var villaNumbers = await _villaNumberRepository.GetAllAsync();
+                var villaNumbers = await _villaNumberRepository.GetAllAsync(includeProperties:"Villa");
                 _response.Result = _mapper.Map<List<VillaNumberDto>>(villaNumbers);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
