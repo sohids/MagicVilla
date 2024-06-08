@@ -46,7 +46,10 @@ namespace MagicVilla.Web.Services
                         requestMessage.Method = HttpMethod.Get;
                         break;
                 }
-
+                //we should throw exception if URL is not correct
+                //log the response result 
+                //log the response code
+                //throw exception if there is any type of exception while calling the api 
                 var responseMessage = await client.SendAsync(requestMessage);
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<T>(responseContent);

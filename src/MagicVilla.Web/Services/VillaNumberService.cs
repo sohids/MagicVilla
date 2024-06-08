@@ -35,7 +35,7 @@ namespace MagicVilla.Web.Services
 
         }
 
-        public Task<T?> CreateAsync<T>(VillaCreateDto createDto)
+        public Task<T?> CreateAsync<T>(VillaNumberCreateDto createDto)
         {
             return SendAsync<T>(new ApiRequest
             {
@@ -45,13 +45,13 @@ namespace MagicVilla.Web.Services
             });
         }
 
-        public Task<T?> UpdateAsync<T>(VillaUpdateDto updateDto)
+        public Task<T?> UpdateAsync<T>(VillaNumberUpdateDto updateDto)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Put,
                 Data = updateDto,
-                Url = _baseUrl + "/api/VillaNumbers/" + updateDto.Id
+                Url = _baseUrl + "/api/VillaNumbers/" + updateDto.VillaId
             });
         }
 
