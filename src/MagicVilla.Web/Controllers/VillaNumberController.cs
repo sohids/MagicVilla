@@ -53,7 +53,7 @@ namespace MagicVilla.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _villaNumberService.CreateAsync<ApiResponse>(model.VillaNumberCreateDto);
+                var response = await _villaNumberService.CreateAsync<ApiResponse>(model.VillaNumber);
                 if (response is { IsSuccess: true })
                 {
                     return RedirectToAction(nameof(IndexVillaNumber));
@@ -62,31 +62,45 @@ namespace MagicVilla.Web.Controllers
             return View(model);
         }
 
-        //public async Task<IActionResult> UpdateVillaNumber(int id)
-        //{
-        //    var response = await _villaNumberService.GetAsync<ApiResponse>(id);
-        //    if (response is not { IsSuccess: true }) return View();
+        public async Task<IActionResult> UpdateVillaNumber(int id)
+        {
+            var villaNumberUpdateVm = new VillaNumberUpdateVm();
+            var response = await _villaNumberService.GetAsync<ApiResponse>(id);
+            if (response is not { IsSuccess: true }) return View();
 
-        //    var model = JsonConvert.DeserializeObject<VillaDto>(response.Result.ToString() ?? string.Empty);
+            var model = JsonConvert.DeserializeObject<VillaNumberDto>(response.Result.ToString() ?? string.Empty);
 
-        //    return View(_mapper.Map<VillaUpdateDto>(model));
-        //}
+            villaNumberUpdateVm.VillaNumber = _mapper.Map<VillaNumberUpdateDto>(model);
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> UpdateVillaNumber(VillaUpdateDto model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var response = await _villaNumberService.UpdateAsync<ApiResponse>(model);
-        //        if (response is { IsSuccess: true })
-        //        {
-        //            return RedirectToAction(nameof(IndexVillaNumber));
-        //        }
-        //    }
+            response = await _villaService.GetVillaAsync<ApiResponse>();
+            if (response is { IsSuccess: true })
+            {
+                //we should throw an exception if serialization property doesn't match 
+                villaNumberUpdateVm.VillaList = JsonConvert.DeserializeObject<List<VillaDto>>(Convert.ToString(response.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    });
+            }
+            return View(villaNumberUpdateVm);
+        }
 
-        //    return View(model);
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVillaNumber(VillaNumberUpdateVm model)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _villaNumberService.UpdateAsync<ApiResponse>(model.VillaNumber);
+                if (response is { IsSuccess: true })
+                {
+                    return RedirectToAction(nameof(IndexVillaNumber));
+                }
+            }
+
+            return View(model);
+        }
 
         //public async Task<IActionResult> DeleteVillaNumber(int id)
         //{
