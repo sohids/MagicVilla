@@ -16,10 +16,17 @@ namespace MagicVilla.Web.Api.UnitTests
         [SetUp]
         public void SetUp()
         {
-            _dbContextMock = new Mock<ApplicationDbContext>();
+            // Create mock DbSet
             _dbSetMock = new Mock<DbSet<TestEntity>>();
 
+            // Create mock ApplicationDbContext with a specific constructor
+            var options = new DbContextOptions<ApplicationDbContext>();
+            _dbContextMock = new Mock<ApplicationDbContext>(options);
+
+            // Setup DbSet return value
             _dbContextMock.Setup(db => db.Set<TestEntity>()).Returns(_dbSetMock.Object);
+
+            // Initialize the repository with the mock context
             _repository = new Repository<TestEntity>(_dbContextMock.Object);
         }
 
