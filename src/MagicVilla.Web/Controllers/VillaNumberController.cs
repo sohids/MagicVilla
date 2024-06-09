@@ -102,27 +102,41 @@ namespace MagicVilla.Web.Controllers
             return View(model);
         }
 
-        //public async Task<IActionResult> DeleteVillaNumber(int id)
-        //{
-        //    var response = await _villaNumberService.GetAsync<ApiResponse>(id);
-        //    if (response is not { IsSuccess: true }) return NotFound();
+        public async Task<IActionResult> DeleteVillaNumber(int id)
+        {
+            var villaNumberDeleteVm = new VillaNumberDeleteVm();
 
-        //    var model = JsonConvert.DeserializeObject<VillaDto>(response.Result.ToString() ?? string.Empty);
+            var response = await _villaNumberService.GetAsync<ApiResponse>(id);
+            if (response is not { IsSuccess: true }) return NotFound();
 
-        //    return View(model);
-        //}
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteVillaNumber(VillaDto model)
-        //{
-        //    var response = await _villaNumberService.DeleteAsync<ApiResponse>(model.Id);
-        //    if (response is { IsSuccess: true })
-        //    {
-        //        return RedirectToAction(nameof(IndexVillaNumber));
-        //    }
+            villaNumberDeleteVm.VillaNumber = JsonConvert.DeserializeObject<VillaNumberDto>(response.Result.ToString() ?? string.Empty);
 
-        //    return View(model);
-        //}
+            response = await _villaService.GetVillaAsync<ApiResponse>();
+            if (response is { IsSuccess: true })
+            {
+                //we should throw an exception if serialization property doesn't match 
+                villaNumberDeleteVm.VillaList = JsonConvert.DeserializeObject<List<VillaDto>>(Convert.ToString(response.Result))
+                    .Select(i => new SelectListItem
+                    {
+                        Text = i.Name,
+                        Value = i.Id.ToString()
+                    });
+            }
+            return View(villaNumberDeleteVm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVillaNumber(VillaNumberDeleteVm model)
+        {
+            var response = await _villaNumberService.DeleteAsync<ApiResponse>(model.VillaNumber.VillaNo);
+            if (response is { IsSuccess: true })
+            {
+                return RedirectToAction(nameof(IndexVillaNumber));
+            }
+
+            return View(model);
+        }
     }
 }
