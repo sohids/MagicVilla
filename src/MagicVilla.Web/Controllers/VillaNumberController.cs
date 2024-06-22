@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using MagicVilla.Utility;
 using MagicVilla.Web.Models;
 using MagicVilla.Web.Models.Dto;
 using MagicVilla.Web.Models.ViewModels;
 using MagicVilla.Web.Services.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace MagicVilla.Web.Controllers
 {
@@ -14,15 +17,19 @@ namespace MagicVilla.Web.Controllers
         private readonly IVillaNumberService _villaNumberService;
         private readonly IVillaService _villaService;
         private readonly IMapper _mapper;
+        private readonly ILogger<VillaNumberController> _logger;
 
-        public VillaNumberController(IVillaNumberService villaNumberService, IMapper mapper, IVillaService villaService)
+
+        public VillaNumberController(IVillaNumberService villaNumberService, IMapper mapper, IVillaService villaService, ILogger<VillaNumberController> logger)
         {
             _villaNumberService = villaNumberService;
             _mapper = mapper;
             _villaService = villaService;
+            _logger = logger;
         }
         public async Task<IActionResult> IndexVillaNumber()
         {
+            CheckSession();
             var list = new List<VillaNumberDto>();
             var response = await _villaNumberService.GetVillaAsync<ApiResponse>();
             if (response != null)
@@ -31,6 +38,8 @@ namespace MagicVilla.Web.Controllers
             }
             return View(list);
         }
+
+        [Authorize(Roles = "admin")]
 
         public async Task<IActionResult> CreateVillaNumber()
         {
@@ -49,6 +58,8 @@ namespace MagicVilla.Web.Controllers
             return View(model);
         }
         [HttpPost]
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> CreateVillaNumber(VillaNumberCreateVm model)
         {
             if (ModelState.IsValid)
@@ -61,6 +72,8 @@ namespace MagicVilla.Web.Controllers
             }
             return View(model);
         }
+
+        [Authorize(Roles = "admin")]
 
         public async Task<IActionResult> UpdateVillaNumber(int id)
         {
@@ -88,6 +101,8 @@ namespace MagicVilla.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> UpdateVillaNumber(VillaNumberUpdateVm model)
         {
             if (ModelState.IsValid)
@@ -101,6 +116,8 @@ namespace MagicVilla.Web.Controllers
 
             return View(model);
         }
+
+        [Authorize(Roles = "admin")]
 
         public async Task<IActionResult> DeleteVillaNumber(int id)
         {
@@ -128,6 +145,8 @@ namespace MagicVilla.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> DeleteVillaNumber(VillaNumberDeleteVm model)
         {
             var response = await _villaNumberService.DeleteAsync<ApiResponse>(model.VillaNumber.VillaNo);
@@ -137,6 +156,20 @@ namespace MagicVilla.Web.Controllers
             }
 
             return View(model);
+        }
+
+        private void CheckSession()
+        {
+            if (HttpContext.Session.TryGetValue(StaticDetails.SessionToken, out byte[] value))
+            {
+                // Session is set
+                var token = Encoding.UTF8.GetString(value);
+                _logger.LogInformation("Session is set: "+ token);
+            }
+            else
+            {
+                // Session is not set
+            }
         }
     }
 }

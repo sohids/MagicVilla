@@ -4,8 +4,7 @@ using MagicVilla.Web.Models.Dto;
 using MagicVilla.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MagicVilla.Web.Controllers
 {
@@ -13,11 +12,13 @@ namespace MagicVilla.Web.Controllers
     {
         private readonly IVillaService _villaService;
         private readonly IMapper _mapper;
+        private readonly ILogger<VillaController> _logger;
 
-        public VillaController(IVillaService villaService, IMapper mapper)
+        public VillaController(IVillaService villaService, IMapper mapper, ILogger<VillaController> logger)
         {
             _villaService = villaService;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<IActionResult> IndexVilla()
         {
@@ -29,12 +30,14 @@ namespace MagicVilla.Web.Controllers
             }
             return View(list);
         }
-
-        public async Task<IActionResult> CreateVilla()
+        [Authorize(Roles = "admin")]
+        public IActionResult CreateVilla()
         {
             return View();
         }
+
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateVilla(VillaCreateDto model)
         {
             if (ModelState.IsValid)
@@ -49,6 +52,7 @@ namespace MagicVilla.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateVilla(int id)
         {
             var response = await _villaService.GetAsync<ApiResponse>(id);
@@ -61,6 +65,8 @@ namespace MagicVilla.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> UpdateVilla(VillaUpdateDto model)
         {
             if (ModelState.IsValid)
@@ -75,6 +81,7 @@ namespace MagicVilla.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteVilla(int id)
         {
             var response = await _villaService.GetAsync<ApiResponse>(id);
@@ -87,6 +94,7 @@ namespace MagicVilla.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteVilla(VillaDto model)
         {
             var response = await _villaService.DeleteAsync<ApiResponse>(model.Id);
