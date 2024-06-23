@@ -5,6 +5,7 @@ using MagicVilla.Api.Data;
 using MagicVilla.Api.Repository;
 using MagicVilla.Api.Repository.IRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -17,9 +18,11 @@ var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-//Swagger configuration to add security token in Swagger UI - begin 
+//swagger configuration 
 builder.Services.AddSwaggerGen(option =>
 {
+    //Swagger configuration to add security token in Swagger UI - begin 
+
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT authorization header using the bearer scheme",
@@ -46,8 +49,45 @@ builder.Services.AddSwaggerGen(option =>
         }
 
     });
+    //Swagger configuration to add security token in Swagger UI - end 
+
+    //Customizing the swagger documentation 
+    option.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1.0",
+        Title = "Magic Villa V1",
+        Description = "Api to manage villa",
+        TermsOfService = new Uri("https://localhost:7002/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "DotnetMastery",
+            Url = new Uri("https://localhost:7002/")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://localhost:7002/license")
+        }
+    });
+
+    option.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Version = "v2.0",
+        Title = "Magic Villa V2",
+        Description = "Api to manage villa",
+        TermsOfService = new Uri("https://localhost:7002/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "DotnetMastery",
+            Url = new Uri("https://localhost:7002/")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://localhost:7002/license")
+        }
+    });
 });
-//Swagger configuration to add security token in Swagger UI - end 
 
 builder.Services.AddAuthentication(x =>
 {
@@ -97,7 +137,12 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(options =>
+        {
+            //setting up default endpoint / Customizing the swagger endpoint title 
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "MagicVillaV1");
+            options.SwaggerEndpoint("/swagger/v2/swagger.json", "MagicVillaV2");
+        });
     }
     app.UseHttpsRedirection();
     app.UseAuthentication();
