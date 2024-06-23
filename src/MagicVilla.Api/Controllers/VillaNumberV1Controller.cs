@@ -10,10 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace MagicVilla.Api.Controllers
 {
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/VillaNumbers")]
     [ApiController]
-    public class VillaNumberController : ControllerBase
+    public class VillaNumberV1Controller : ControllerBase
     {
         private readonly ILogger<VillaController> _logger;
         private readonly IVillaNumberRepository _villaNumberRepository;
@@ -21,7 +20,7 @@ namespace MagicVilla.Api.Controllers
         private readonly IMapper _mapper;
         private readonly ApiResponse _response;
 
-        public VillaNumberController(ILogger<VillaController> logger, IVillaNumberRepository villaNumberRepository,
+        public VillaNumberV1Controller(ILogger<VillaController> logger, IVillaNumberRepository villaNumberRepository,
             IMapper mapper, IVillaRepository villaRepository)
         {
             _logger = logger;
@@ -76,12 +75,6 @@ namespace MagicVilla.Api.Controllers
             _response.Result = _mapper.Map<VillaNumberDto>(villaNumber);
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
-        }
-        [MapToApiVersion("2.0")]
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
         }
 
         [HttpPost]
