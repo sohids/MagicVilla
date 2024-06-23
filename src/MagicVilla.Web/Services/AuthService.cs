@@ -22,7 +22,7 @@ namespace MagicVilla.Web.Services
             {
                 ApiType = StaticDetails.ApiType.Post,
                 Data = objToCreate,
-                Url = _baseUrl + "/api/UsersAuth/login"
+                Url = _baseUrl + "/api/v1/UsersAuth/login"
             });
         }
 
@@ -32,7 +32,7 @@ namespace MagicVilla.Web.Services
             {
                 ApiType = StaticDetails.ApiType.Get,
                 Data = objToCreate,
-                Url = _baseUrl + "/api/UsersAuth/register"
+                Url = _baseUrl + "/api/v1/UsersAuth/register"
             });
         }
     }

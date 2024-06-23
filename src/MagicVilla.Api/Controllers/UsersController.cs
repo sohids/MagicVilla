@@ -5,11 +5,11 @@ using MagicVilla.Api.Models.Dto;
 using MagicVilla.Api.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MagicVilla.Api.Controllers.v1
+namespace MagicVilla.Api.Controllers
 {
     [Route("api/v{version:apiVersion}/UsersAuth")]
-    [ApiVersion("1.0")]
     [ApiController]
+    [ApiVersionNeutral] //it doesn't consist any version 
     public class UsersController : Controller
     {
         private readonly IUserRepository _userRepository;

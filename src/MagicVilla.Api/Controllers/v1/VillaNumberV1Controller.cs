@@ -50,8 +50,6 @@ namespace MagicVilla.Api.Controllers.v1
             return _response;
         }
 
-        [MapToApiVersion("1.0")]
-
         [HttpGet("{id}", Name = "GetVillaNumber")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
