@@ -16,51 +16,56 @@ namespace MagicVilla.Web.Services
             _baseUrl = configuration["ServiceUrls:VillaApi"];
         }
 
-        public Task<T?> GetVillaAsync<T>()
+        public Task<T?> GetVillaAsync<T>(string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Get,
-                Url = _baseUrl + "/api/villas"
+                Url = _baseUrl + "/api/villas",
+                Token = token
             });
         }
 
-        public Task<T?> GetAsync<T>(int id)
+        public Task<T?> GetAsync<T>(int id, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Get,
-                Url = _baseUrl + "/api/villas/"+id
+                Url = _baseUrl + "/api/villas/"+id,
+                Token = token
             });
 
         }
 
-        public Task<T?> CreateAsync<T>(VillaCreateDto createDto)
+        public Task<T?> CreateAsync<T>(VillaCreateDto createDto, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Post,
                 Data = createDto,
-                Url = _baseUrl+"/api/villas"
+                Url = _baseUrl+"/api/villas",
+                Token = token
             });
         }
 
-        public Task<T?> UpdateAsync<T>(VillaUpdateDto updateDto)
+        public Task<T?> UpdateAsync<T>(VillaUpdateDto updateDto, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Put,
                 Data = updateDto,
-                Url = _baseUrl + "/api/villas/" +updateDto.Id
+                Url = _baseUrl + "/api/villas/" +updateDto.Id,
+                Token = token
             });
         }
 
-        public Task<T?> DeleteAsync<T>(int id)
+        public Task<T?> DeleteAsync<T>(int id, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Delete,
-                Url = _baseUrl + "/api/villas/" +id
+                Url = _baseUrl + "/api/villas/" +id,
+                Token = token
             });
         }
 

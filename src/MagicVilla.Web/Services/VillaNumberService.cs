@@ -16,51 +16,56 @@ namespace MagicVilla.Web.Services
             _baseUrl = configuration["ServiceUrls:VillaApi"];
         }
 
-        public Task<T?> GetVillaAsync<T>()
+        public Task<T?> GetVillaAsync<T>(string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Get,
-                Url = _baseUrl + "/api/VillaNumbers"
+                Url = _baseUrl + "/api/VillaNumbers",
+                Token = token
             });
         }
 
-        public Task<T?> GetAsync<T>(int id)
+        public Task<T?> GetAsync<T>(int id, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Get,
-                Url = _baseUrl + "/api/VillaNumbers/" + id
+                Url = _baseUrl + "/api/VillaNumbers/" + id,
+                Token = token
             });
 
         }
 
-        public Task<T?> CreateAsync<T>(VillaNumberCreateDto createDto)
+        public Task<T?> CreateAsync<T>(VillaNumberCreateDto createDto, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Post,
                 Data = createDto,
-                Url = _baseUrl+ "/api/VillaNumbers"
+                Url = _baseUrl+ "/api/VillaNumbers",
+                Token = token
             });
         }
 
-        public Task<T?> UpdateAsync<T>(VillaNumberUpdateDto updateDto)
+        public Task<T?> UpdateAsync<T>(VillaNumberUpdateDto updateDto, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Put,
                 Data = updateDto,
-                Url = _baseUrl + "/api/VillaNumbers/" + updateDto.VillaNo
+                Url = _baseUrl + "/api/VillaNumbers/" + updateDto.VillaNo,
+                Token = token
             });
         }
 
-        public Task<T?> DeleteAsync<T>(int id)
+        public Task<T?> DeleteAsync<T>(int id, string token)
         {
             return SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticDetails.ApiType.Delete,
-                Url = _baseUrl + "/api/VillaNumbers/" +id
+                Url = _baseUrl + "/api/VillaNumbers/" +id,
+                Token = token
             });
         }
 

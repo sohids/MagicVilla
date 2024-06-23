@@ -31,7 +31,7 @@ namespace MagicVilla.Web.Controllers
         {
             CheckSession();
             var list = new List<VillaNumberDto>();
-            var response = await _villaNumberService.GetVillaAsync<ApiResponse>();
+            var response = await _villaNumberService.GetVillaAsync<ApiResponse>(HttpContext.Session.GetString(StaticDetails.SessionToken));
             if (response != null)
             {
                 list = JsonConvert.DeserializeObject<List<VillaNumberDto>>(response.Result.ToString() ?? string.Empty);
@@ -43,7 +43,7 @@ namespace MagicVilla.Web.Controllers
 
         public async Task<IActionResult> CreateVillaNumber()
         {
-            var response = await _villaService.GetVillaAsync<ApiResponse>();
+            var response = await _villaService.GetVillaAsync<ApiResponse>(HttpContext.Session.GetString(StaticDetails.SessionToken));
             var model = new VillaNumberCreateVm();
             if (response is { IsSuccess: true })
             {
@@ -64,7 +64,7 @@ namespace MagicVilla.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _villaNumberService.CreateAsync<ApiResponse>(model.VillaNumber);
+                var response = await _villaNumberService.CreateAsync<ApiResponse>(model.VillaNumber, HttpContext.Session.GetString(StaticDetails.SessionToken));
                 if (response is { IsSuccess: true })
                 {
                     return RedirectToAction(nameof(IndexVillaNumber));
@@ -78,14 +78,14 @@ namespace MagicVilla.Web.Controllers
         public async Task<IActionResult> UpdateVillaNumber(int id)
         {
             var villaNumberUpdateVm = new VillaNumberUpdateVm();
-            var response = await _villaNumberService.GetAsync<ApiResponse>(id);
+            var response = await _villaNumberService.GetAsync<ApiResponse>(id, HttpContext.Session.GetString(StaticDetails.SessionToken));
             if (response is not { IsSuccess: true }) return View();
 
             var model = JsonConvert.DeserializeObject<VillaNumberDto>(response.Result.ToString() ?? string.Empty);
 
             villaNumberUpdateVm.VillaNumber = _mapper.Map<VillaNumberUpdateDto>(model);
 
-            response = await _villaService.GetVillaAsync<ApiResponse>();
+            response = await _villaService.GetVillaAsync<ApiResponse>(HttpContext.Session.GetString(StaticDetails.SessionToken));
             if (response is { IsSuccess: true })
             {
                 //we should throw an exception if serialization property doesn't match 
@@ -107,7 +107,7 @@ namespace MagicVilla.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var response = await _villaNumberService.UpdateAsync<ApiResponse>(model.VillaNumber);
+                var response = await _villaNumberService.UpdateAsync<ApiResponse>(model.VillaNumber, HttpContext.Session.GetString(StaticDetails.SessionToken));
                 if (response is { IsSuccess: true })
                 {
                     return RedirectToAction(nameof(IndexVillaNumber));
@@ -123,13 +123,13 @@ namespace MagicVilla.Web.Controllers
         {
             var villaNumberDeleteVm = new VillaNumberDeleteVm();
 
-            var response = await _villaNumberService.GetAsync<ApiResponse>(id);
+            var response = await _villaNumberService.GetAsync<ApiResponse>(id, HttpContext.Session.GetString(StaticDetails.SessionToken));
             if (response is not { IsSuccess: true }) return NotFound();
 
 
             villaNumberDeleteVm.VillaNumber = JsonConvert.DeserializeObject<VillaNumberDto>(response.Result.ToString() ?? string.Empty);
 
-            response = await _villaService.GetVillaAsync<ApiResponse>();
+            response = await _villaService.GetVillaAsync<ApiResponse>(HttpContext.Session.GetString(StaticDetails.SessionToken));
             if (response is { IsSuccess: true })
             {
                 //we should throw an exception if serialization property doesn't match 
@@ -149,7 +149,7 @@ namespace MagicVilla.Web.Controllers
 
         public async Task<IActionResult> DeleteVillaNumber(VillaNumberDeleteVm model)
         {
-            var response = await _villaNumberService.DeleteAsync<ApiResponse>(model.VillaNumber.VillaNo);
+            var response = await _villaNumberService.DeleteAsync<ApiResponse>(model.VillaNumber.VillaNo, HttpContext.Session.GetString(StaticDetails.SessionToken));
             if (response is { IsSuccess: true })
             {
                 return RedirectToAction(nameof(IndexVillaNumber));

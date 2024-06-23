@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using MagicVilla.Utility;
 using MagicVilla.Web.Models;
 using MagicVilla.Web.Services.IService;
@@ -50,6 +51,12 @@ namespace MagicVilla.Web.Services
                 //log the response result 
                 //log the response code
                 //throw exception if there is any type of exception while calling the api 
+
+                if (!string.IsNullOrEmpty(apiRequest.Token))
+                {
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", apiRequest.Token);
+                }
                 var responseMessage = await client.SendAsync(requestMessage);
                 var responseContent = await responseMessage.Content.ReadAsStringAsync();
                 var responseObject = JsonConvert.DeserializeObject<T>(responseContent);
