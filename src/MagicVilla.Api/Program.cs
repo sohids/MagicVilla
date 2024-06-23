@@ -16,6 +16,8 @@ var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+//Swagger configuration to add security token in Swagger UI - begin 
 builder.Services.AddSwaggerGen(option =>
 {
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -45,6 +47,8 @@ builder.Services.AddSwaggerGen(option =>
 
     });
 });
+//Swagger configuration to add security token in Swagger UI - end 
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,35 +72,15 @@ builder.Services.AddScoped<IVillaNumberRepository, VillaNumberRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddApiVersioning(options =>
 {
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true; //setup default api version 
+    options.DefaultApiVersion = new ApiVersion(1, 0); //this is the default api version 
+    options.ReportApiVersions = true; //shows all api version in the response 
 
 }).AddApiExplorer(options =>
 {
-    options.GroupNameFormat = "'v'VVV";
+    options.GroupNameFormat = "'v'VVV"; //For api url api/v{version:apiVersion}/
+    options.SubstituteApiVersionInUrl = true; //set automated default api version in the url api/v1}
 });
-
-//var apiVersioningBuilder = builder.Services.AddApiVersioning(options =>
-//{
-//    options.ReportApiVersions = true;
-//    //options.DefaultApiVersion = new ApiVersion(1, 0);
-//    options.AssumeDefaultVersionWhenUnspecified = true;
-//    // Use whatever reader you want
-//    options.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
-//        new HeaderApiVersionReader("x-api-version"),
-//        new MediaTypeApiVersionReader("x-api-version"));
-//}); // Nuget Package: Asp.Versioning.Mvc
-
-//apiVersioningBuilder.AddApiExplorer(options =>
-//{
-//    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-//    // note: the specified format code will format the version as "'v'major[.minor][-status]"
-//    options.GroupNameFormat = "'v'VVV";
-
-//    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-//    // can also be used to control the format of the API version in route templates
-//    options.SubstituteApiVersionInUrl = true;
-//}); 
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStr"));
@@ -117,7 +101,7 @@ try
     }
     app.UseHttpsRedirection();
     app.UseAuthentication();
-    app.UseAuthorization();
+    app.UseAuthorization(); //authorization always should be put under the authentication 
     app.MapControllers();
     app.Run();
 }

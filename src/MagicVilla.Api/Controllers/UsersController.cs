@@ -1,13 +1,14 @@
 ﻿using System.Net;
+using Asp.Versioning;
 using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using MagicVilla.Api.Repository.IRepository;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagicVilla.Api.Controllers
 {
-    [Route("api/UsersAuth")]
+    [Route("api/v{version:apiVersion}/UsersAuth")]
+    [ApiVersion("1.0")]
     [ApiController]
     public class UsersController : Controller
     {
