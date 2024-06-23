@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MagicVilla.Api.Controllers
+namespace MagicVilla.Api.Controllers.v1
 {
     [Route("api/v{version:apiVersion}/Villas")]
     [ApiController]
@@ -137,7 +137,7 @@ namespace MagicVilla.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [Authorize(Roles = "Custom")]
-        
+
         public async Task<ActionResult<ApiResponse>> DeleteVilla(int id)
         {
             try

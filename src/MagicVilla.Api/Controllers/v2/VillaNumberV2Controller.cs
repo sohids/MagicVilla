@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using Asp.Versioning;
 using AutoMapper;
+using MagicVilla.Api.Controllers.v1;
 using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using MagicVilla.Api.Repository.IRepository;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MagicVilla.Api.Controllers
+namespace MagicVilla.Api.Controllers.v2
 {
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/VillaNumbers")]

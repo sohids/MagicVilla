@@ -7,7 +7,7 @@ using MagicVilla.Api.Repository.IRepository;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MagicVilla.Api.Controllers
+namespace MagicVilla.Api.Controllers.v1
 {
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/VillaNumbers")]
@@ -37,7 +37,7 @@ namespace MagicVilla.Api.Controllers
             try
             {
                 _logger.LogDebug("Getting a list of villa numbers");
-                var villaNumbers = await _villaNumberRepository.GetAllAsync(includeProperties:"Villa");
+                var villaNumbers = await _villaNumberRepository.GetAllAsync(includeProperties: "Villa");
                 _response.Result = _mapper.Map<List<VillaNumberDto>>(villaNumbers);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
@@ -64,7 +64,7 @@ namespace MagicVilla.Api.Controllers
                 return BadRequest(_response);
             }
 
-            var villaNumber = await _villaNumberRepository.GetAsync(x=>x.VillaNo == id);
+            var villaNumber = await _villaNumberRepository.GetAsync(x => x.VillaNo == id);
             if (villaNumber == null)
             {
                 _logger.LogWarning($"Villa doesn't found against the id {id}");
@@ -113,7 +113,7 @@ namespace MagicVilla.Api.Controllers
                 _response.ErrorMessage = new List<string> { ex.ToString() };
             }
             return _response;
-            
+
         }
 
         [HttpDelete("{id}", Name = "DeleteVillaNumber")]
