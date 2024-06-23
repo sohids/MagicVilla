@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Asp.Versioning;
 using AutoMapper;
 using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
@@ -11,6 +12,7 @@ namespace MagicVilla.Api.Controllers
 {
     [Route("api/Villas")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class VillaController : ControllerBase
     {
         private readonly ILogger<VillaController> _logger;

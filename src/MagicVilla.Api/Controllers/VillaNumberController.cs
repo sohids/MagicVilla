@@ -1,15 +1,17 @@
 ﻿using System.Net;
+using Asp.Versioning;
 using AutoMapper;
 using MagicVilla.Api.Models;
 using MagicVilla.Api.Models.Dto;
 using MagicVilla.Api.Repository.IRepository;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagicVilla.Api.Controllers
 {
-    [Route("api/VillaNumbers")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/VillaNumbers")]
     [ApiController]
     public class VillaNumberController : ControllerBase
     {
@@ -49,6 +51,8 @@ namespace MagicVilla.Api.Controllers
             return _response;
         }
 
+        [MapToApiVersion("1.0")]
+
         [HttpGet("{id}", Name = "GetVillaNumber")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,6 +76,12 @@ namespace MagicVilla.Api.Controllers
             _response.Result = _mapper.Map<VillaNumberDto>(villaNumber);
             _response.StatusCode = HttpStatusCode.OK;
             return Ok(_response);
+        }
+        [MapToApiVersion("2.0")]
+        [HttpGet]
+        public IEnumerable<string> Get()
+        {
+            return new string[] { "value1", "value2" };
         }
 
         [HttpPost]
